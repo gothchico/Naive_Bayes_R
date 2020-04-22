@@ -1,0 +1,31 @@
+train_without_na <- read.csv("C:/Users/Mahi/Downloads/train_without_na.csv")
+View(train_without_na)
+data<-train_without_na
+data.frame(data)
+attach(data)
+data$Outcome<-NA
+str(sj)
+sj$Outcome<-NA
+sj$Outcome <- cut(sj$total_cases, c(-Inf, 8, 17, 31, 79, Inf),labels = c("Low", "Low-Medium","Medium","High","Very High"))
+str(sj)
+data$Outcome<-sj$Outcome
+head(data)
+describe(data)
+missmap(data)
+data1<-data[,c(2:8,11:14,19)]
+data1$log_station_precip_mm<-NA
+data1$log_station_precip_mm <-log(1+data$station_precip_mm)
+data2<-data[,c(2:8,11:14,19)]
+data2$log_precipitation_amt_mm<-NA
+data2$log_precipitation_amt_mm<-log(1+data$precipitation_amt_mm)
+data3<-data[,c(2:8,11:14,19)]
+data3$log_reanalysis_precip_amt_kg_per_m2<-NA
+data3$log_reanalysis_precip_amt_kg_per_m2<-log(1+data$reanalysis_precip_amt_kg_per_m2)
+help("methods")
+help("trainControl")
+model1=train(data1,sj$Outcome,'nb',trControl = trainControl(method = "cv",number = 10,repeats = 50 ))
+print(model1)
+model2=train(data2,sj$Outcome,'nb',trControl = trainControl(method = "cv",number = 10,repeats = 50 ))
+print(model2)
+model3=train(data3,sj$Outcome,'nb',trControl = trainControl(method = "cv",number = 10,repeats = 50 ))
+print(model3)
